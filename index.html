@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DropLesson — Drop Your Material. Get Your Entire Lesson.</title>
+<title>DropLesson — Drop Your PDF. Your Whole Lesson Posts Itself.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -21,38 +21,89 @@
   html { scroll-behavior: smooth; }
   body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
   body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
-  .wrap { max-width: 800px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* ICONS */
+  .ico { width:1em; height:1em; display:inline-block; vertical-align:middle; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  .icon-tile { width:44px; height:44px; border-radius:11px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); background:var(--surface2); font-size:22px; color:var(--text); flex-shrink:0; }
+  .icon-tile.t-accent { border-color:rgba(0,230,160,0.28); background:rgba(0,230,160,0.07); color:var(--accent); }
+  .icon-tile.t-gold   { border-color:rgba(232,201,110,0.3); background:rgba(232,201,110,0.07); color:var(--gold); }
+  .icon-tile.t-purple { border-color:rgba(167,139,250,0.3); background:rgba(167,139,250,0.08); color:var(--purple); }
+
+  /* STICKY BUY BAR */
+  .buybar { position:fixed; top:0; left:0; right:0; z-index:50; background:rgba(10,10,10,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); transform:translateY(-100%); transition:transform 0.3s cubic-bezier(.2,.8,.2,1); }
+  .buybar.show { transform:translateY(0); }
+  .buybar-inner { max-width:820px; margin:0 auto; padding:11px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .buybar-logo { font-family:var(--font-display); font-size:17px; font-weight:800; letter-spacing:-0.02em; }
+  .buybar-logo span { color:var(--accent); }
+  .buybar-actions { display:flex; align-items:center; gap:10px; }
+  .buybar-price { font-family:var(--font-mono); font-size:12px; color:var(--muted); }
+  .buybar-price b { color:var(--text); font-weight:500; }
+  .buybar .bb-btn { font-family:var(--font-display); font-size:13px; font-weight:700; padding:9px 18px; border-radius:3px; text-decoration:none; background:var(--accent); color:#000; transition:opacity .15s,transform .1s; white-space:nowrap; }
+  .buybar .bb-btn:hover { opacity:.9; transform:translateY(-1px); }
+  @media(max-width:540px){ .buybar-price{display:none;} }
 
   /* HERO */
-  .hero { padding: 80px 0 40px; text-align: center; }
-  .badge { display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); border:1px solid var(--border-active); padding:6px 14px; border-radius:2px; margin-bottom:28px; }
-  .hero h1 { font-family:var(--font-display); font-size:clamp(48px,9vw,80px); font-weight:800; line-height:1.0; letter-spacing:-0.03em; margin-bottom:12px; }
+  .hero { padding: 88px 0 36px; text-align: center; }
+  .badge { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); border:1px solid var(--border-active); padding:7px 16px; border-radius:100px; margin-bottom:30px; white-space:nowrap; }
+  .badge .ico { font-size:14px; }
+  .hero h1 { font-family:var(--font-display); font-size:clamp(52px,10vw,92px); font-weight:800; line-height:0.95; letter-spacing:-0.035em; margin-bottom:18px; }
   .hero h1 .drop { color:var(--accent); }
-  .tagline { font-size:clamp(16px,2.5vw,20px); font-weight:300; color:var(--muted); margin-bottom:36px; }
+  .tagline { font-size:clamp(17px,2.6vw,22px); font-weight:300; color:var(--muted); margin-bottom:34px; max-width:640px; margin-left:auto; margin-right:auto; }
   .tagline strong { color:var(--text); font-weight:500; }
 
-  /* REQUIRES CALLOUT */
-  .requires-bar { display:flex; align-items:center; justify-content:center; gap:12px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.25); border-radius:4px; padding:12px 20px; margin-bottom:40px; flex-wrap:wrap; }
-  .requires-bar .req-item { font-family:var(--font-mono); font-size:12px; color:var(--purple); letter-spacing:0.05em; display:flex; align-items:center; gap:6px; }
-  .requires-bar .req-item::before { content:'✓'; color:var(--accent); }
-  .req-divider { color:var(--border); }
+  /* HERO CTA */
+  .hero-cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:18px; }
+  .hero-note { font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.04em; margin-bottom:48px; }
+  .hero-note a { color:var(--purple); text-decoration:none; }
+  .hero-note a:hover { text-decoration:underline; }
+
+  /* DROP DEMO */
+  .drop-demo { display:flex; align-items:center; justify-content:center; gap:clamp(14px,4vw,40px); background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:34px clamp(18px,4vw,40px); margin:0 auto 52px; max-width:720px; position:relative; overflow:hidden; }
+  .demo-col { display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .demo-cap { font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+  .file-chip { display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; padding:9px 13px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); white-space:nowrap; }
+  .file-chip .ico { font-size:15px; }
+  .file-chip.in { color:var(--text); }
+  .file-chip.in .ico { color:var(--red); }
+  .chip-out { color:var(--text); }
+  .out-stack { display:flex; flex-direction:column; gap:8px; }
+  .out-stack .file-chip { opacity:0; animation:chipIn 4s ease-in-out infinite; }
+  .out-stack .file-chip:nth-child(1){ animation-delay:1.1s; } .out-stack .file-chip:nth-child(1) .ico{ color:var(--accent2); }
+  .out-stack .file-chip:nth-child(2){ animation-delay:1.4s; } .out-stack .file-chip:nth-child(2) .ico{ color:var(--accent); }
+  .out-stack .file-chip:nth-child(3){ animation-delay:1.7s; } .out-stack .file-chip:nth-child(3) .ico{ color:var(--gold); }
+  .demo-arrow { font-family:var(--font-mono); color:var(--muted); font-size:18px; }
+  /* core */
+  .demo-core { position:relative; width:78px; height:78px; display:flex; align-items:center; justify-content:center; }
+  .demo-core .ring { position:absolute; inset:0; margin:auto; width:46px; height:46px; border-radius:50%; border:1.5px solid var(--accent); opacity:0; animation:ripple 4s ease-out infinite; }
+  .demo-core .ring:nth-child(2){ animation-delay:1.3s; }
+  .demo-core .ring:nth-child(3){ animation-delay:2.6s; }
+  .demo-core .puck { position:relative; width:46px; height:46px; border-radius:13px; background:rgba(0,230,160,0.1); border:1px solid var(--border-active); display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:22px; }
+  .demo-falling { position:absolute; top:-4px; left:50%; transform:translateX(-50%); color:var(--red); font-size:16px; animation:fall 4s ease-in infinite; opacity:0; }
+  @keyframes ripple { 0%{ opacity:0; transform:scale(0.5);} 12%{opacity:0.7;} 70%{ opacity:0; transform:scale(2.4);} 100%{opacity:0;} }
+  @keyframes chipIn { 0%,20%{opacity:0; transform:translateX(-8px);} 40%,86%{opacity:1; transform:translateX(0);} 100%{opacity:0;} }
+  @keyframes fall { 0%{opacity:0; transform:translate(-50%,-22px);} 8%{opacity:1;} 22%{opacity:1; transform:translate(-50%,2px);} 30%,100%{opacity:0; transform:translate(-50%,2px);} }
+  @media(max-width:600px){ .drop-demo{ flex-wrap:wrap; gap:18px; } .demo-arrow{ display:none; } }
+  @media(prefers-reduced-motion:reduce){ .out-stack .file-chip{opacity:1; animation:none;} .demo-core .ring,.demo-falling{animation:none;} .demo-falling{opacity:0;} }
 
   /* STATS */
-  .stats-bar { display:flex; justify-content:center; gap:48px; padding:32px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); margin-bottom:60px; flex-wrap:wrap; }
+  .stats-bar { display:flex; justify-content:center; gap:clamp(24px,6vw,56px); padding:32px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); margin-bottom:60px; flex-wrap:wrap; }
   .stat { text-align:center; }
-  .stat-num { font-family:var(--font-display); font-size:32px; font-weight:800; letter-spacing:-0.03em; color:var(--accent); line-height:1; margin-bottom:4px; }
+  .stat-num { font-family:var(--font-display); font-size:34px; font-weight:800; letter-spacing:-0.03em; color:var(--accent); line-height:1; margin-bottom:6px; }
   .stat-label { font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
 
   /* SECTION */
   .section-label { font-family:var(--font-mono); font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
-  .section-title { font-family:var(--font-display); font-size:clamp(24px,4vw,38px); font-weight:700; letter-spacing:-0.02em; line-height:1.1; margin-bottom:20px; }
+  .section-title { font-family:var(--font-display); font-size:clamp(25px,4.2vw,40px); font-weight:700; letter-spacing:-0.02em; line-height:1.1; margin-bottom:20px; }
 
   /* PROBLEM */
   .problem { padding:48px 0; }
   .problem-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:28px; }
   @media(max-width:520px){.problem-grid{grid-template-columns:1fr}}
-  .problem-item { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:20px 20px 20px 42px; font-size:14px; color:var(--muted); line-height:1.5; position:relative; }
-  .problem-item::before { content:'×'; position:absolute; left:16px; top:20px; color:var(--red); font-size:16px; font-weight:700; }
+  .problem-item { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px 20px 20px 46px; font-size:14px; color:var(--muted); line-height:1.5; position:relative; transition:border-color .15s; }
+  .problem-item:hover { border-color:rgba(226,75,74,0.3); }
+  .problem-item::before { content:''; position:absolute; left:18px; top:21px; width:16px; height:16px; border-radius:50%; background:rgba(226,75,74,0.12); }
+  .problem-item::after { content:'×'; position:absolute; left:22px; top:18px; color:var(--red); font-size:14px; font-weight:700; }
 
   /* RIPPLE */
   .ripple-divider { display:flex; align-items:center; gap:16px; margin:48px 0; }
@@ -73,55 +124,58 @@
   .flow-table td { padding:16px; border-bottom:1px solid var(--border); vertical-align:top; }
   .flow-table tr:last-child td { border-bottom:none; }
   .flow-table td:first-child { font-family:var(--font-mono); color:var(--accent); font-size:18px; width:48px; text-align:center; }
-  .flow-table td:nth-child(2) { width:90px; color:var(--muted); font-size:12px; font-family:var(--font-mono); letter-spacing:0.05em; }
+  .flow-table td:nth-child(2) { width:96px; color:var(--muted); font-size:12px; font-family:var(--font-mono); letter-spacing:0.05em; }
   .flow-table tr { background:var(--surface); transition:background 0.15s; }
-  .flow-table tr:hover { background:var(--surface2); }
-  .flow-tag { display:inline-block; font-family:var(--font-mono); font-size:10px; padding:3px 8px; border-radius:2px; margin-left:8px; vertical-align:middle; }
+  .flow-table tbody tr:hover { background:var(--surface2); }
+  .flow-tag { display:inline-block; font-family:var(--font-mono); font-size:10px; padding:3px 8px; border-radius:3px; margin-left:8px; vertical-align:middle; }
   .tag-auto { background:rgba(0,230,160,0.1); color:var(--accent); border:1px solid rgba(0,230,160,0.2); }
   .tag-you  { background:rgba(0,184,255,0.1); color:var(--accent2); border:1px solid rgba(0,184,255,0.2); }
+  .flow-foot { margin-top:16px; display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.04em; }
+  .flow-foot .ico { font-size:14px; color:var(--accent); }
 
   /* OUTPUT */
   .output { padding:48px 0; }
   .output-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:28px; }
   @media(max-width:600px){.output-grid{grid-template-columns:1fr}}
-  .output-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:20px; }
+  .output-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; transition:transform .15s,border-color .15s; }
   .output-card.featured { border-color:var(--border-active); background:rgba(0,230,160,0.04); }
-  .output-icon { font-size:22px; margin-bottom:12px; }
+  .output-card:hover { transform:translateY(-2px); }
+  .output-card .icon-tile { margin-bottom:14px; }
   .output-card h3 { font-family:var(--font-display); font-size:15px; font-weight:700; margin-bottom:6px; }
   .output-card p { font-size:13px; color:var(--muted); line-height:1.5; }
-  .upgrade-callout { background:rgba(232,201,110,0.06); border:1px solid rgba(232,201,110,0.25); border-radius:4px; padding:20px 24px; margin-top:24px; display:flex; align-items:flex-start; gap:16px; }
-  .upgrade-icon { font-size:22px; flex-shrink:0; }
-  .upgrade-callout h4 { font-family:var(--font-display); font-size:14px; font-weight:700; color:var(--gold); margin-bottom:4px; }
-  .upgrade-callout p { font-size:13px; color:var(--muted); }
-
-  /* REQUIRES CLAUDE PRO BOX */
-  .pro-required { background:rgba(167,139,250,0.06); border:1px solid rgba(167,139,250,0.2); border-radius:4px; padding:20px 24px; margin-top:24px; display:flex; align-items:flex-start; gap:16px; }
-  .pro-required-icon { font-size:22px; flex-shrink:0; }
-  .pro-required h4 { font-family:var(--font-display); font-size:14px; font-weight:700; color:var(--purple); margin-bottom:6px; }
-  .pro-required p { font-size:13px; color:var(--muted); line-height:1.55; }
-  .pro-required a { color:var(--accent2); text-decoration:none; }
-  .pro-required a:hover { text-decoration:underline; }
+  .callout-row { background:rgba(232,201,110,0.06); border:1px solid rgba(232,201,110,0.25); border-radius:8px; padding:20px 22px; margin-top:24px; display:flex; align-items:flex-start; gap:16px; }
+  .callout-row h4 { font-family:var(--font-display); font-size:14px; font-weight:700; margin-bottom:4px; }
+  .callout-row.gold h4 { color:var(--gold); }
+  .callout-row.purple { background:rgba(167,139,250,0.06); border-color:rgba(167,139,250,0.2); }
+  .callout-row.purple h4 { color:var(--purple); }
+  .callout-row p { font-size:13px; color:var(--muted); line-height:1.55; }
+  .callout-row a { color:var(--accent2); text-decoration:none; }
+  .callout-row a:hover { text-decoration:underline; }
 
   /* CODE PREVIEW */
-  .code-preview { background:#0d0d0d; border:1px solid var(--border); border-radius:4px; padding:20px 24px; font-family:var(--font-mono); font-size:12px; line-height:1.7; margin-top:24px; overflow-x:auto; }
+  .code-preview { background:#0d0d0d; border:1px solid var(--border); border-radius:8px; padding:20px 24px; font-family:var(--font-mono); font-size:12px; line-height:1.7; margin-top:24px; overflow-x:auto; }
+  .code-preview .code-head { display:flex; align-items:center; gap:7px; margin-bottom:14px; }
+  .code-preview .dot { width:9px; height:9px; border-radius:50%; }
   .c-green{color:#4ec994}.c-blue{color:#79b8ff}.c-gray{color:#6a737d}.c-yell{color:#e3b341}.c-pink{color:#f97583}
 
   /* PRICING */
   .tier-section { padding:48px 0; }
   .tier-intro { font-size:15px; color:var(--muted); margin-bottom:32px; max-width:560px; }
   .tier-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .tier-table th { font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:14px 16px; text-align:center; border-bottom:1px solid var(--border); color:var(--muted); }
+  .tier-table th { font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:14px 16px; text-align:center; border-bottom:1px solid var(--border); color:var(--muted); position:relative; }
   .tier-table th:first-child { text-align:left; }
   .tier-table th.best-col { color:var(--accent); border-bottom-color:var(--accent); }
   .tier-table th.gold-col { color:var(--gold); border-bottom-color:rgba(232,201,110,0.4); }
+  .best-flag { display:block; font-size:8.5px; letter-spacing:0.1em; color:#000; background:var(--accent); border-radius:3px; padding:2px 0; margin:0 8px 7px; }
   .tier-table td { padding:12px 16px; border-bottom:1px solid var(--border); vertical-align:middle; }
   .tier-table td:first-child { color:var(--muted); }
   .tier-table tr:last-child td { border-bottom:none; }
-  .tier-table tr { background:var(--surface); transition:background 0.12s; }
-  .tier-table tr:hover { background:var(--surface2); }
+  .tier-table tbody tr { background:var(--surface); transition:background 0.12s; }
+  .tier-table tbody tr:hover { background:var(--surface2); }
   .tier-table td:not(:first-child) { text-align:center; }
-  .check { color:var(--accent); font-size:16px; }
-  .gold-check { color:var(--gold); font-size:16px; }
+  .check { color:var(--accent); }
+  .gold-check { color:var(--gold); }
+  .check .ico, .gold-check .ico { font-size:16px; }
   .dash { color:#333; font-size:14px; }
   .price-row td { font-family:var(--font-display); font-weight:800; font-size:28px; letter-spacing:-0.02em; padding:20px 16px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
   .price-row td:first-child { font-size:14px; color:var(--muted); font-family:var(--font-mono); font-weight:400; letter-spacing:0.05em; }
@@ -131,19 +185,22 @@
   .gold-col-cell { background:rgba(232,201,110,0.02); }
   .tier-cta-row td { padding:16px; border-top:1px solid var(--border); }
   .tier-cta-row td:not(:first-child) { text-align:center; }
-  .btn-tier { display:inline-block; font-family:var(--font-display); font-size:13px; font-weight:700; padding:10px 20px; border-radius:2px; text-decoration:none; cursor:pointer; border:none; transition:opacity 0.15s; }
+  .btn-tier { display:inline-block; font-family:var(--font-display); font-size:13px; font-weight:700; padding:10px 20px; border-radius:3px; text-decoration:none; cursor:pointer; border:none; transition:opacity 0.15s,transform .1s; }
+  .btn-tier:hover { transform:translateY(-1px); }
   .btn-tier-primary { background:var(--accent); color:#000; }
   .btn-tier-primary:hover { opacity:0.88; }
   .btn-tier-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
   .btn-tier-ghost:hover { border-color:rgba(255,255,255,0.25); }
   .btn-tier-gold { background:rgba(232,201,110,0.15); color:var(--gold); border:1px solid rgba(232,201,110,0.3); }
   .btn-tier-gold:hover { background:rgba(232,201,110,0.25); }
+  .guarantee { display:flex; align-items:center; justify-content:center; gap:9px; margin-top:22px; font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.05em; }
+  .guarantee .ico { font-size:15px; color:var(--accent); }
 
   /* WHO */
   .for-whom { padding:48px 0; }
   .persona-list { margin-top:24px; display:flex; flex-direction:column; gap:12px; }
-  .persona { display:flex; align-items:flex-start; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:16px 20px; }
-  .persona-emoji { font-size:24px; flex-shrink:0; margin-top:2px; }
+  .persona { display:flex; align-items:flex-start; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px 20px; transition:border-color .15s; }
+  .persona:hover { border-color:rgba(255,255,255,0.16); }
   .persona strong { font-family:var(--font-display); font-size:14px; font-weight:700; display:block; margin-bottom:3px; }
   .persona p { font-size:13px; color:var(--muted); }
 
@@ -151,66 +208,123 @@
   .support-section { padding:48px 0; }
   .support-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:28px; }
   @media(max-width:520px){.support-grid{grid-template-columns:1fr}}
-  .support-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:20px; }
+  .support-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; }
   .support-card.featured { border-color:rgba(167,139,250,0.35); background:rgba(167,139,250,0.04); }
-  .support-card .s-icon { font-size:22px; margin-bottom:12px; }
+  .support-card .icon-tile { margin-bottom:14px; }
   .support-card h3 { font-family:var(--font-display); font-size:15px; font-weight:700; margin-bottom:6px; }
   .support-card p { font-size:13px; color:var(--muted); line-height:1.5; }
-  .support-card .s-tag { display:inline-block; font-family:var(--font-mono); font-size:10px; padding:3px 8px; border-radius:2px; margin-top:10px; background:rgba(167,139,250,0.12); color:var(--purple); border:1px solid rgba(167,139,250,0.25); }
+  .support-card .s-link { display:inline-block; margin-top:10px; font-family:var(--font-mono); font-size:11px; text-decoration:none; letter-spacing:0.05em; }
+  .support-card .s-tag { display:inline-block; font-family:var(--font-mono); font-size:10px; padding:3px 8px; border-radius:3px; margin-top:10px; background:rgba(167,139,250,0.12); color:var(--purple); border:1px solid rgba(167,139,250,0.25); }
 
   /* PROOF */
   .proof { padding:48px 0; }
-  .quote-block { background:var(--surface); border-left:3px solid var(--accent); border-radius:0 4px 4px 0; padding:24px 28px; font-size:17px; font-style:italic; color:var(--text); line-height:1.6; margin-bottom:12px; }
+  .quote-block { background:var(--surface); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:26px 30px; font-size:17px; font-style:italic; color:var(--text); line-height:1.6; margin-bottom:12px; position:relative; }
   .quote-attr { font-family:var(--font-mono); font-size:12px; color:var(--muted); padding-left:4px; }
 
   /* CTA */
   .cta-section { padding:64px 0 48px; text-align:center; }
-  .cta-section h2 { font-family:var(--font-display); font-size:clamp(28px,5vw,48px); font-weight:800; letter-spacing:-0.03em; margin-bottom:12px; }
-  .cta-section p { color:var(--muted); margin-bottom:36px; font-size:15px; }
+  .cta-section h2 { font-family:var(--font-display); font-size:clamp(30px,5.2vw,52px); font-weight:800; letter-spacing:-0.03em; line-height:1.0; margin-bottom:14px; }
+  .cta-section p { color:var(--muted); margin-bottom:34px; font-size:15px; }
   .cta-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:20px; }
-  .btn-primary { background:var(--accent); color:#000; font-family:var(--font-display); font-size:15px; font-weight:700; padding:14px 32px; border:none; border-radius:2px; cursor:pointer; text-decoration:none; display:inline-block; transition:opacity 0.15s,transform 0.1s; }
+  .btn-primary { background:var(--accent); color:#000; font-family:var(--font-display); font-size:15px; font-weight:700; padding:15px 32px; border:none; border-radius:3px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:9px; transition:opacity 0.15s,transform 0.1s; }
   .btn-primary:hover { opacity:0.9; transform:translateY(-1px); }
-  .btn-secondary { background:transparent; color:var(--text); font-family:var(--font-display); font-size:15px; font-weight:600; padding:14px 32px; border:1px solid var(--border); border-radius:2px; cursor:pointer; text-decoration:none; display:inline-block; transition:border-color 0.15s; }
+  .btn-primary .ico { font-size:17px; }
+  .btn-secondary { background:transparent; color:var(--text); font-family:var(--font-display); font-size:15px; font-weight:600; padding:15px 32px; border:1px solid var(--border); border-radius:3px; cursor:pointer; text-decoration:none; display:inline-block; transition:border-color 0.15s; }
   .btn-secondary:hover { border-color:rgba(255,255,255,0.25); }
-
-  /* CTA REQUIRES NOTE */
   .cta-requires { font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.05em; }
   .cta-requires a { color:var(--purple); text-decoration:none; }
   .cta-requires a:hover { text-decoration:underline; }
 
   /* FOOTER */
-  footer { border-top:1px solid var(--border); padding:32px 0; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.08em; }
-  footer .logo { font-family:var(--font-display); font-size:16px; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin-bottom:8px; }
+  footer { border-top:1px solid var(--border); padding:36px 0; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.08em; }
+  footer .logo { font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin-bottom:8px; }
   footer .logo span { color:var(--accent); }
+  footer .foot-links { display:flex; gap:18px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  footer .foot-links a { color:var(--muted); text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:color .15s; }
+  footer .foot-links a:hover { color:var(--text); }
+  footer .foot-links .ico { font-size:14px; }
 </style>
 </head>
 <body>
+
+<!-- ===== ICON SPRITE ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-slides" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M12 17v3M9 20h6M8 13v-3M12 13V8M16 13v-5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 6l-3 12"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="M11.5 11.5 21 21M16 16l3-3M19 19l2-2"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 6a4 4 0 0 1 4.9 5l-9.9 9.9a2.1 2.1 0 0 1-3-3L16.9 8A4 4 0 0 1 15 6z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 8l10-4 10 4-10 4z"/><path d="M6 10v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 8v6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+</svg>
+
+<!-- ===== STICKY BUY BAR ===== -->
+<div class="buybar" id="buybar">
+  <div class="buybar-inner">
+    <div class="buybar-logo">Drop<span>Lesson</span></div>
+    <div class="buybar-actions">
+      <span class="buybar-price">Full Toolkit <b>$67</b></span>
+      <a href="https://droplesson.gumroad.com/l/toolkit" target="_blank" class="bb-btn">Get the Toolkit</a>
+    </div>
+  </div>
+</div>
+
 <div class="wrap">
 
   <!-- HERO -->
   <section class="hero">
-    <div class="badge">🌏 Built for Teachers Everywhere</div>
+    <div class="badge"><svg class="ico"><use href="#i-globe"/></svg> Built for Teachers Everywhere</div>
     <h1><span class="drop">Drop</span>Lesson</h1>
     <p class="tagline">
-      <strong>Drop your material.</strong> Get your entire lesson.<br>
+      <strong>Drop your PDF.</strong> Your whole lesson posts itself.<br>
       Slides. Lesson plan. Posted to Classroom. One run.
     </p>
 
-    <!-- REQUIRES BAR -->
-    <div class="requires-bar">
-      <span class="req-item">Claude Pro required</span>
-      <span class="req-divider">·</span>
-      <span class="req-item">Google Classroom</span>
-      <span class="req-divider">·</span>
-      <span class="req-item">Google Drive</span>
-      <span class="req-divider">·</span>
-      <span class="req-item">Google Apps Script</span>
+    <div class="hero-cta">
+      <a href="https://droplesson.gumroad.com/l/toolkit" target="_blank" class="btn-primary"><svg class="ico"><use href="#i-bolt"/></svg> Get the Full Toolkit — $67</a>
+      <a href="#pricing" class="btn-secondary">See all tiers</a>
+    </div>
+    <p class="hero-note">Requires <a href="https://claude.ai/upgrade" target="_blank">Claude Pro</a> ($20/mo) · Google Classroom · Google Drive</p>
+
+    <!-- DROP DEMO -->
+    <div class="drop-demo">
+      <div class="demo-col">
+        <span class="demo-cap">You drop</span>
+        <div class="file-chip in"><svg class="ico"><use href="#i-doc"/></svg> unit-3.pdf</div>
+      </div>
+      <span class="demo-arrow">→</span>
+      <div class="demo-col">
+        <div class="demo-core">
+          <span class="demo-falling">▾</span>
+          <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+          <span class="puck"><svg class="ico"><use href="#i-bolt"/></svg></span>
+        </div>
+        <span class="demo-cap">DropLesson</span>
+      </div>
+      <span class="demo-arrow">→</span>
+      <div class="demo-col">
+        <span class="demo-cap">You get</span>
+        <div class="out-stack">
+          <div class="file-chip chip-out"><svg class="ico"><use href="#i-slides"/></svg> slides.pptx</div>
+          <div class="file-chip chip-out"><svg class="ico"><use href="#i-doc"/></svg> plan.docx</div>
+          <div class="file-chip chip-out"><svg class="ico"><use href="#i-code"/></svg> post.gs</div>
+        </div>
+      </div>
     </div>
 
     <div class="stats-bar">
       <div class="stat"><div class="stat-num">3</div><div class="stat-label">files per lesson</div></div>
       <div class="stat"><div class="stat-num">1</div><div class="stat-label">button to post</div></div>
-      <div class="stat"><div class="stat-num">20</div><div class="stat-label">min vs 3 hrs</div></div>
+      <div class="stat"><div class="stat-num">20<span style="font-size:18px">min</span></div><div class="stat-label">vs 3 hours</div></div>
       <div class="stat"><div class="stat-num">20</div><div class="stat-label">lines to paste</div></div>
     </div>
   </section>
@@ -242,7 +356,7 @@
         <tr><td>4</td><td>Classroom</td><td>Slideshow + Classwork posted as drafts. Done. <span class="flow-tag tag-auto">auto</span></td></tr>
       </tbody>
     </table>
-    <p style="margin-top:16px;font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:0.05em;">⚡ The automation engine runs from a shared library — no complex code to paste. Ever.</p>
+    <p class="flow-foot"><svg class="ico"><use href="#i-bolt"/></svg> The automation engine runs from a shared library — no complex code to paste. Ever.</p>
   </section>
 
   <!-- WHAT YOU GET -->
@@ -251,32 +365,32 @@
     <h2 class="section-title">One PDF in.<br>Three files out. Zero setup.</h2>
     <div class="output-grid">
       <div class="output-card featured">
-        <div class="output-icon">📊</div>
+        <div class="icon-tile t-accent"><svg class="ico"><use href="#i-slides"/></svg></div>
         <h3>PowerPoint Slides</h3>
         <p>12-slide deck. Vocab cards, lesson content, classwork instructions. Built from your material — not from thin air.</p>
       </div>
       <div class="output-card featured">
-        <div class="output-icon">📋</div>
+        <div class="icon-tile t-accent"><svg class="ico"><use href="#i-doc"/></svg></div>
         <h3>Lesson Plan DOCX</h3>
         <p>50-min schedule, objectives, vocab list, differentiation. Auto-filed to your Drive folder.</p>
       </div>
       <div class="output-card featured">
-        <div class="output-icon">⚙️</div>
+        <div class="icon-tile t-accent"><svg class="ico"><use href="#i-code"/></svg></div>
         <h3>Apps Script (.gs)</h3>
         <p>Posts slides to Classroom. Posts classwork as a photo-submission assignment. Drafts, 20 pts, one run.</p>
       </div>
     </div>
 
-    <div class="upgrade-callout">
-      <div class="upgrade-icon">⚡</div>
+    <div class="callout-row gold">
+      <div class="icon-tile t-gold"><svg class="ico"><use href="#i-bolt"/></svg></div>
       <div>
         <h4>Upgrade: Auto-Graded Quizzes &amp; Tests</h4>
         <p>The Full Toolkit and Monthly Pro unlock auto-graded Google Form quizzes, unit tests, and vocabulary checks — all posted to Classroom with points distributed automatically. Zero marking.</p>
       </div>
     </div>
 
-    <div class="pro-required">
-      <div class="pro-required-icon">🔑</div>
+    <div class="callout-row purple">
+      <div class="icon-tile t-purple"><svg class="ico"><use href="#i-key"/></svg></div>
       <div>
         <h4>Built on Claude Pro</h4>
         <p>DropLesson requires a <a href="https://claude.ai/upgrade" target="_blank">Claude Pro subscription</a> ($20/month). Claude Pro gives you Projects, file upload, and the persistent memory that makes the whole workflow run. If you're not on Pro yet — that's step one. Most teachers find it pays for itself in the first week of lessons saved.</p>
@@ -284,6 +398,7 @@
     </div>
 
     <div class="code-preview">
+      <div class="code-head"><span class="dot" style="background:#e24b4a"></span><span class="dot" style="background:#e3b341"></span><span class="dot" style="background:#4ec994"></span></div>
       <span class="c-gray">// This is the entire script teachers paste. 20 lines. That's it.</span><br><br>
       <span class="c-pink">var</span> <span class="c-blue">CLASSROOM_ID</span>    = <span class="c-green">"your-id-here"</span>;<br>
       <span class="c-pink">var</span> <span class="c-blue">DRIVE_FOLDER_ID</span> = <span class="c-green">"your-id-here"</span>;<br>
@@ -291,7 +406,7 @@
       <span class="c-pink">var</span> <span class="c-blue">DOCX_U1_L1</span>      = <span class="c-green">"your-file-id"</span>;<br><br>
       <span class="c-pink">function</span> <span class="c-blue">postLesson_U1_L1</span>() {<br>
       &nbsp;&nbsp;<span class="c-yell">DropLesson_Library</span>.<span class="c-blue">postLesson</span>(CLASSROOM_ID, DRIVE_FOLDER_ID, SLIDES_U1_L1, DOCX_U1_L1, ...);<br>
-      &nbsp;&nbsp;<span class="c-gray">// ✅ Drive filed. Classroom updated. Done.</span><br>
+      &nbsp;&nbsp;<span class="c-gray">// Drive filed. Classroom updated. Done.</span><br>
       }<br><br>
       <span class="c-gray">// The rest runs in the background. Teachers never see it.</span>
     </div>
@@ -300,7 +415,7 @@
   <div class="ripple-divider"><div class="ripple-icon"><span></span><span></span><span></span><span></span><span></span></div></div>
 
   <!-- PRICING -->
-  <section class="tier-section">
+  <section class="tier-section" id="pricing">
     <p class="section-label">// pricing</p>
     <h2 class="section-title">Start lean.<br>Upgrade when you're ready.</h2>
     <p class="tier-intro">Tier 1 gets you the full workflow. Upgrade for auto-grading, quizzes, tests, and direct support when you need them.</p>
@@ -310,7 +425,7 @@
         <tr>
           <th></th>
           <th>STARTER</th>
-          <th class="best-col">FULL TOOLKIT</th>
+          <th class="best-col"><span class="best-flag">MOST POPULAR</span>FULL TOOLKIT</th>
           <th class="gold-col">MONTHLY PRO</th>
         </tr>
       </thead>
@@ -323,63 +438,63 @@
         </tr>
         <tr>
           <td>Master Prompt template</td>
-          <td><span class="check">✓</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="check">✓</span></td>
+          <td><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>Setup Guide PDF</td>
-          <td><span class="check">✓</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="check">✓</span></td>
+          <td><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>.gs skeleton — classwork posting</td>
-          <td><span class="check">✓</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="check">✓</span></td>
+          <td><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>Real sample outputs (PPTX + DOCX + .gs)</td>
           <td><span class="dash">—</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="check">✓</span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>10-min Loom walkthrough</td>
           <td><span class="dash">—</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="check">✓</span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
-          <td>⚡ Auto-graded quiz .gs script</td>
+          <td>Auto-graded quiz .gs script</td>
           <td><span class="dash">—</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="gold-check">✓</span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="gold-check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
-          <td>⚡ Unit test builder .gs script</td>
+          <td>Unit test builder .gs script</td>
           <td><span class="dash">—</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="gold-check">✓</span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="gold-check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>Telegram buyer community</td>
           <td><span class="dash">—</span></td>
-          <td class="best-col-cell"><span class="check">✓</span></td>
-          <td class="gold-col-cell"><span class="gold-check">✓</span></td>
+          <td class="best-col-cell"><span class="check"><svg class="ico"><use href="#i-check"/></svg></span></td>
+          <td class="gold-col-cell"><span class="gold-check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>Direct support from the creator</td>
           <td><span class="dash">—</span></td>
           <td class="best-col-cell"><span class="dash">—</span></td>
-          <td class="gold-col-cell"><span class="gold-check">✓</span></td>
+          <td class="gold-col-cell"><span class="gold-check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr>
           <td>New scripts monthly</td>
           <td><span class="dash">—</span></td>
           <td class="best-col-cell"><span class="dash">—</span></td>
-          <td class="gold-col-cell"><span class="gold-check">✓</span></td>
+          <td class="gold-col-cell"><span class="gold-check"><svg class="ico"><use href="#i-check"/></svg></span></td>
         </tr>
         <tr class="tier-cta-row">
           <td></td>
@@ -389,6 +504,7 @@
         </tr>
       </tbody>
     </table>
+    <p class="guarantee"><svg class="ico"><use href="#i-shield"/></svg> Instant download on Gumroad · Lifetime access to your tier · Free updates within your tier</p>
   </section>
 
   <!-- SUPPORT -->
@@ -397,31 +513,31 @@
     <h2 class="section-title">Built by a teacher.<br>Supported by one too.</h2>
     <div class="support-grid">
       <div class="support-card featured">
-        <div class="s-icon">💬</div>
+        <div class="icon-tile t-purple"><svg class="ico"><use href="#i-chat"/></svg></div>
         <h3>Telegram Buyer Community</h3>
         <p>Join a group of teachers using DropLesson in real classrooms. Share lessons, ask questions, get answers from people doing the same thing.</p>
-        <a href="https://t.me/jridefast" target="_blank" style="display:inline-block;margin-top:10px;font-family:var(--font-mono);font-size:11px;color:var(--accent2);text-decoration:none;letter-spacing:0.05em;">t.me/jridefast →</a>
+        <a href="https://t.me/jridefast" target="_blank" class="s-link" style="color:var(--accent2)">t.me/jridefast →</a>
         <span class="s-tag" style="display:block;margin-top:6px;">Full Toolkit + Monthly Pro</span>
       </div>
       <div class="support-card featured">
-        <div class="s-icon">🛠️</div>
+        <div class="icon-tile t-purple"><svg class="ico"><use href="#i-wrench"/></svg></div>
         <h3>Direct Support from the Creator</h3>
         <p>Hit me directly on Telegram <a href="https://t.me/jridefast" target="_blank" style="color:var(--accent2);text-decoration:none;">@jridefast</a>. I built this in a real classroom and I know every error you'll encounter. Most issues resolved in minutes, not days.</p>
         <span class="s-tag">Monthly Pro</span>
       </div>
       <div class="support-card">
-        <div class="s-icon">📖</div>
+        <div class="icon-tile t-accent"><svg class="ico"><use href="#i-book"/></svg></div>
         <h3>Setup Guide PDF</h3>
         <p>Step-by-step from zero to first lesson posted. Every error explained. Claude fixes any .gs issue in seconds — just paste and go.</p>
       </div>
       <div class="support-card">
-        <div class="s-icon">✉️</div>
+        <div class="icon-tile t-accent"><svg class="ico"><use href="#i-mail"/></svg></div>
         <h3>Email Support</h3>
         <p>Questions before you buy? Issues after? Reach out directly.</p>
-        <a href="mailto:droplesson.app@gmail.com" style="display:inline-block;margin-top:10px;font-family:var(--font-mono);font-size:11px;color:var(--accent);text-decoration:none;letter-spacing:0.05em;">droplesson.app@gmail.com →</a>
+        <a href="/cdn-cgi/l/email-protection#3155435e415d5442425e5f1f50414171565c50585d1f525e5c" class="s-link" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="f195839e819d9482829e9fdf908181b1969c90989ddf929e9c">[email&#160;protected]</span> →</a>
       </div>
       <div class="support-card">
-        <div class="s-icon">🤖</div>
+        <div class="icon-tile t-accent"><svg class="ico"><use href="#i-spark"/></svg></div>
         <h3>Claude Fixes Errors For You</h3>
         <p>Hit a script error? Copy it from the Apps Script log, paste it into your Claude Project, say "fix this." Done. No support ticket needed.</p>
       </div>
@@ -433,9 +549,9 @@
     <p class="section-label">// who this is for</p>
     <h2 class="section-title">If you teach EFL<br>and use Google Classroom —<br>this is for you.</h2>
     <div class="persona-list">
-      <div class="persona"><div class="persona-emoji">🧑‍🏫</div><div><strong>EP Teachers in Thailand</strong><p>M1–M6, English Program. 5 classes, 40+ students each. DropLesson gives you your evenings back.</p></div></div>
-      <div class="persona"><div class="persona-emoji">📚</div><div><strong>EFL Teachers across Asia</strong><p>Thailand, Vietnam, Korea, Japan — if you're teaching from a textbook and posting to Google Classroom, this system works for you.</p></div></div>
-      <div class="persona"><div class="persona-emoji">🌍</div><div><strong>International &amp; Language School Teachers</strong><p>Already on Google Workspace? Drop a unit plan PDF and get a full term of materials in an afternoon.</p></div></div>
+      <div class="persona"><div class="icon-tile t-accent"><svg class="ico"><use href="#i-cap"/></svg></div><div><strong>EP Teachers in Thailand</strong><p>M1–M6, English Program. 5 classes, 40+ students each. DropLesson gives you your evenings back.</p></div></div>
+      <div class="persona"><div class="icon-tile t-accent"><svg class="ico"><use href="#i-book"/></svg></div><div><strong>EFL Teachers across Asia</strong><p>Thailand, Vietnam, Korea, Japan — if you're teaching from a textbook and posting to Google Classroom, this system works for you.</p></div></div>
+      <div class="persona"><div class="icon-tile t-accent"><svg class="ico"><use href="#i-globe"/></svg></div><div><strong>International &amp; Language School Teachers</strong><p>Already on Google Workspace? Drop a unit plan PDF and get a full term of materials in an afternoon.</p></div></div>
     </div>
   </section>
 
@@ -451,7 +567,7 @@
     <h2>Your next lesson<br>is one drop away.</h2>
     <p>Upload your material. Let Claude build the rest. Post to Classroom in one run.</p>
     <div class="cta-buttons">
-      <a href="https://droplesson.gumroad.com/l/toolkit" target="_blank" class="btn-primary">Get the Full Toolkit — $67</a>
+      <a href="https://droplesson.gumroad.com/l/toolkit" target="_blank" class="btn-primary"><svg class="ico"><use href="#i-bolt"/></svg> Get the Full Toolkit — $67</a>
       <a href="https://droplesson.gumroad.com/l/starter" target="_blank" class="btn-secondary">Start with Starter — $37</a>
     </div>
     <p class="cta-requires">Requires <a href="https://claude.ai/upgrade" target="_blank">Claude Pro</a> ($20/mo) + Google Classroom + Google Drive</p>
@@ -463,12 +579,28 @@
 <footer>
   <div class="wrap">
     <div class="logo">Drop<span>Lesson</span></div>
-    <div>Drop your material. Get your entire lesson.</div>
-    <div style="margin-top:8px;opacity:.5">Built by a teacher, for teachers. Bangkok, Thailand.</div>
-    <div style="margin-top:8px;"><a href="https://t.me/jridefast" target="_blank" style="color:var(--accent2);text-decoration:none;opacity:.7;">Telegram: @jridefast</a></div>
-    <div style="margin-top:6px;"><a href="mailto:droplesson.app@gmail.com" style="color:var(--accent);text-decoration:none;opacity:.7;">droplesson.app@gmail.com</a></div>
+    <div>Drop your PDF. Your whole lesson posts itself.</div>
+    <div style="margin-top:8px;opacity:.5;display:flex;align-items:center;gap:6px;justify-content:center;"><svg class="ico" style="font-size:13px"><use href="#i-pin"/></svg> Built by a teacher, for teachers. Bangkok, Thailand.</div>
+    <div class="foot-links">
+      <a href="https://t.me/jridefast" target="_blank"><svg class="ico"><use href="#i-chat"/></svg> @jridefast</a>
+      <a href="/cdn-cgi/l/email-protection#aaced8c5dac6cfd9d9c5c484cbdadaeacdc7cbc3c684c9c5c7"><svg class="ico"><use href="#i-mail"/></svg> <span class="__cf_email__" data-cfemail="482c3a2738242d3b3b272666293838082f25292124662b2725">[email&#160;protected]</span></a>
+    </div>
   </div>
 </footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function(){
+    var bar = document.getElementById('buybar');
+    var hero = document.querySelector('.hero');
+    function onScroll(){
+      var trigger = hero ? hero.offsetHeight - 120 : 600;
+      if (window.scrollY > trigger) bar.classList.add('show');
+      else bar.classList.remove('show');
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  })();
+</script>
 
 </body>
 </html>
